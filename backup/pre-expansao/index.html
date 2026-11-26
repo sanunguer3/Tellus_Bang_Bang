@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tellus Bang Bang</title>
+<meta name="description" content="Tellus Bang Bang — jogo de arena com campeões, tipos e uma arena que se fecha. Monte seu time e enfrente a IA.">
+<meta name="theme-color" content="#e4e9df" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#141a16" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪨</text></svg>">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="md" role="dialog" aria-modal="true" aria-hidden="true"></div>
+<div id="tip" role="tooltip"></div>
+<div id="toasts" aria-live="polite" aria-atomic="false"></div>
+<button id="thm" class="theme" aria-label="Alternar tema">🌓</button>
+
+<section id="home">
+  <div class="logo" aria-hidden="true">🪨</div>
+  <h1>Tellus Bang Bang</h1>
+  <p class="tagline mut">Campeões, tipos e uma arena que se fecha.</p>
+  <button class="go" id="hb">Sala de batalha</button>
+  <button id="hc">Campeões</button>
+  <button id="hh">Como jogar</button>
+  <p class="tiny mut">Protótipo — crie campeões e compartilhe na nuvem.</p>
+</section>
+
+<section id="help">
+  <div class="row"><button id="h2h" class="sm">← Início</button></div>
+  <div id="hcont"></div>
+</section>
+
+<section id="ed">
+  <h1>Campeões</h1>
+  <div class="row">
+    <input id="eq" type="search" placeholder="Buscar campeão…" aria-label="Buscar campeão">
+    <button id="enw">+ Novo</button>
+    <button id="ers" class="sm">Restaurar elenco</button>
+    <span id="ecloud" class="cloudstat" hidden></span>
+  </div>
+  <div class="grid" id="el"></div>
+  <div id="ef"></div>
+  <div class="row">
+    <button id="e2h">Início</button>
+    <span id="em" role="status" aria-live="polite"></span>
+  </div>
+</section>
+
+<section id="menu">
+  <h1>Tellus Bang Bang</h1>
+  <p class="mut">Monte seu time (até 3) e escolha quantos times lutam. Os outros times são IA.</p>
+  <div class="row">Times na arena: <span id="nt"></span></div>
+  <div class="row"><b>Seu time:</b> <span id="cnt"></span></div>
+  <div class="note" id="pn"></div>
+  <div class="grid" id="ro"></div>
+  <div class="row">
+    <button id="m2h">Início</button>
+    <button id="mh">Como jogar</button>
+    <button class="go" id="play">Lutar</button>
+    <span id="cloud" class="cloudstat" hidden></span>
+  </div>
+  <p class="hint">Toque na etiqueta (tank, dps, suporte) de um campeão para trocá-la. Segure um campeão para ver os detalhes.</p>
+</section>
+
+<section id="g">
+  <div id="hudE" aria-label="Times inimigos"></div>
+  <div id="cvw">
+    <canvas id="cv" role="img" aria-label="Arena de batalha"></canvas>
+    <div id="info"></div>
+    <div id="log" aria-label="Registro da batalha">
+      <div class="logh">📜 Registro</div>
+      <ol id="logl"></ol>
+    </div>
+    <div id="end" role="dialog" aria-modal="true" aria-live="assertive">
+      <div id="et"></div>
+      <div class="row center">
+        <button class="go" id="back">Voltar à sala</button>
+        <button id="brm">Revanche</button>
+      </div>
+    </div>
+  </div>
+  <div id="hud" aria-label="Seu time"></div>
+  <div id="hud2">
+    <button id="bd">Defender (J)</button>
+    <button id="br">Recuar (K)</button>
+    <button id="bf">Livre (L)</button>
+    <button id="bu">Atacar (U)</button>
+    <button id="bi">Finalizar (I)</button>
+    <button id="bo">Focar (O)</button>
+    <button id="blog" class="sm" aria-pressed="true" title="Mostrar ou ocultar o registro da batalha">📜 Registro</button>
+    <button id="bq" class="sm">Sair</button>
+    <span class="hint">Comandos valem para o líder (★) e só um por vez — <b>Livre</b> cancela a ordem ativa. Troque de líder com A/D, 1–3 ou tocando nele. Toque num inimigo para focar.</span>
+  </div>
+</section>
+
+<noscript>Este jogo precisa de JavaScript ativado.</noscript>
+
+<script src="js/core.js"></script>
+<script src="js/data.js"></script>
+<script src="js/sanitize.js"></script>
+<script src="js/state.js"></script>
+<script src="js/champions.js"></script>
+<script src="js/menu.js"></script>
+<script src="js/editor.js"></script>
+<script src="js/battle.js"></script>
+<script src="js/render.js"></script>
+<script src="js/hud.js"></script>
+<script src="js/tips.js"></script>
+<script src="js/input.js"></script>
+<script src="js/main.js"></script>
+<script src="https://www.gstatic.com/firebasejs/13.3.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/13.3.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/13.3.0/firebase-firestore-compat.js"></script>
+<script src="js/cloud.js"></script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+Músicas instaladas
+------------------
+As duas faixas enviadas foram instaladas aqui com os nomes que o jogo procura.
+Elas são links para os mesmos arquivos, então não ocupam espaço duplicado:
+
+  menu.mp3 (e home/help/ed/hist/hloja/hcolecao.mp3)  = Choque_de_Pixels_20261122_1625.mp3
+  battle_classico.mp3 (e battle_*) + result.mp3     = Choque_de_Pixels_20261122_1625 (1).mp3
+
+Assim, o arquivo original toca em todas as telas de menu/história e o segundo
+toca em todas as batalhas. Para trocar só uma tela, substitua o arquivo daquele
+nome (isso desfaz o link somente dele). Para trocar todas de uma vez, substitua
+todos os arquivos do grupo.
+
+Nomes reconhecidos
+------------------
+O jogo procura, nesta ordem, as extensões .mp3, .ogg e .wav para cada nome:
+
+  home                  tela inicial
+  menu                  sala de batalha
+  help                  como jogar
+  ed                    editor de campeões
+  hist                  aventura (modo história)
+  hloja                 loja da história
+  hcolecao              coleção da história
+  battle_classico       batalha clássica
+  battle_infinito       batalha infinita
+  battle_sobrevivencia  sobrevivência
+  battle_historia       lutas da história
+  result                tela de resultado
+
+Se um arquivo não existir ou não puder ser lido, aquela cena usa a música
+procedural gerada pelo jogo.

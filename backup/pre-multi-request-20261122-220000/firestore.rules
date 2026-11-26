@@ -1,0 +1,115 @@
+rules_version = '2';
+
+// Tellus Bang Bang — campeões compartilhados e perfis por jogador.
+// Leitura pública; escrita pelo dono do documento. O e-mail do dono do jogo
+// também pode editar ou apagar campeões de outras pessoas.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isGameOwner() {
+      return signedIn()
+        && request.auth.token.email == 'sanunguer3@gmail.com';
+    }
+
+    function validChamp() {
+      return request.resource.data.keys().hasOnly(['dono', 'usuario', 'nome', 'json'])
+        && request.resource.data.nome is string
+        && request.resource.data.nome.size() <= 12
+        && request.resource.data.json is string
+        && request.resource.data.json.size() < 100000;
+    }
+
+    match /campeoes/{id} {
+      allow read: if true;
+
+      allow create: if signedIn()
+        && request.resource.data.dono == request.auth.uid
+        && validChamp();
+
+      allow update: if signedIn()
+        && validChamp()
+        && (resource.data.dono == request.auth.uid || isGameOwner())
+        && request.resource.data.dono == resource.data.dono;
+
+      allow delete: if signedIn()
+        && (resource.data.dono == request.auth.uid || isGameOwner());
+    }
+
+    // Cada jogador lê e grava somente o próprio perfil (elenco + configurações).
+    match /usuarios/{uid} {
+      allow read, write: if signedIn() && request.auth.uid == uid;
+    }
+
+    // Salas PvP: qualquer jogador conectado pode procurar uma sala pelo código;
+    // só participantes podem alterá-la, e o anfitrião é imutável.
+    function validRoom() {
+      let d = request.resource.data;
+      return d.keys().hasOnly([
+          'code', 'host', 'guest', 'jogadores', 'nomes', 'rule', 'arena',
+          'format', 'slots', 'teams', 'ready', 'lineup', 'phase', 'startAt',
+          'result', 'criado'
+        ])
+        && d.code is string && d.code == code
+        && d.host is string
+        && d.guest is string
+        && d.jogadores is list && d.jogadores.size() >= 1 && d.jogadores.size() <= 4
+        && d.jogadores[0] == d.host
+        && d.nomes is map && d.ready is map && d.lineup is map && d.result is map
+        && d.rule in ['max', 'min', 'colecao']
+        && d.arena is string
+        && d.format in ['1v1', '2v2']
+        && d.slots in [2, 4]
+        && d.jogadores.size() <= d.slots
+        && d.teams is list && d.teams.size() == 2
+        && d.teams[0] is list && d.teams[1] is list
+        && d.teams[0].size() <= 2 && d.teams[1].size() <= 2
+        && d.jogadores[0] in d.teams[0]
+        && (d.jogadores.size() < 3 || d.jogadores[2] in d.teams[1])
+        && d.phase in ['waiting', 'fighting', 'done']
+        && d.startAt is number
+        && d.criado is number;
+    }
+
+    function inRoom() {
+      return request.auth.uid in resource.data.jogadores;
+    }
+
+    // Entrar numa sala: acrescenta exatamente um jogador, sem tocar no host
+    // nem no anfitrião/guest já definido.
+    function joining() {
+      let before = resource.data;
+      let after = request.resource.data;
+      return after.jogadores.size() == before.jogadores.size() + 1
+        && after.jogadores.size() <= after.slots
+        && request.auth.uid in after.jogadores
+        && !(request.auth.uid in before.jogadores)
+        && after.host == before.host
+        && after.guest == (before.jogadores.size() == 1 ? request.auth.uid : before.guest);
+    }
+
+    match /salas/{code} {
+      allow read: if signedIn();
+
+      allow create: if signedIn()
+        && validRoom()
+        && request.auth.uid == request.resource.data.host
+        && request.resource.data.jogadores.size() == 1;
+
+      allow update: if signedIn()
+        && validRoom()
+        && request.auth.uid in request.resource.data.jogadores
+        && (inRoom() || joining())
+        && resource.data.host == request.resource.data.host
+        && (resource.data.phase == 'waiting'
+          || request.resource.data.phase == 'done'
+          || (resource.data.phase == 'done' && request.resource.data.phase == 'waiting'))
+        && (resource.data.phase != 'fighting' || request.resource.data.rule == resource.data.rule);
+
+      allow delete: if signedIn()
+        && (request.auth.uid == resource.data.host || isGameOwner());
+    }
+  }
+}

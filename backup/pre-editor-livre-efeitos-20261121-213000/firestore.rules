@@ -1,0 +1,46 @@
+rules_version = '2';
+
+// Tellus Bang Bang — campeões compartilhados e perfis por jogador.
+// Leitura pública; escrita só pelo dono do documento. O e-mail do dono do jogo
+// também pode apagar campeões de outras pessoas.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isGameOwner() {
+      return signedIn()
+        && request.auth.token.email == 'sanunguer3@gmail.com';
+    }
+
+    function validChamp() {
+      return request.resource.data.keys().hasOnly(['dono', 'usuario', 'nome', 'json'])
+        && request.resource.data.nome is string
+        && request.resource.data.nome.size() <= 12
+        && request.resource.data.json is string
+        && request.resource.data.json.size() < 100000;
+    }
+
+    match /campeoes/{id} {
+      allow read: if true;
+
+      allow create: if signedIn()
+        && request.resource.data.dono == request.auth.uid
+        && validChamp();
+
+      allow update: if signedIn()
+        && validChamp()
+        && resource.data.dono == request.auth.uid
+        && request.resource.data.dono == request.auth.uid;
+
+      allow delete: if signedIn()
+        && (resource.data.dono == request.auth.uid || isGameOwner());
+    }
+
+    // Cada jogador lê e grava somente o próprio perfil (elenco + configurações).
+    match /usuarios/{uid} {
+      allow read, write: if signedIn() && request.auth.uid == uid;
+    }
+  }
+}

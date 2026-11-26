@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tellus Bang Bang</title>
+<meta name="description" content="Tellus Bang Bang — jogo de arena com campeões, tipos, arenas temáticas e uma arena que se fecha. Monte seu time e enfrente a IA.">
+<meta name="theme-color" content="#e4e9df" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#141a16" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💀</text></svg>">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="md" role="dialog" aria-modal="true" aria-hidden="true"></div>
+<div id="tip" role="tooltip"></div>
+<div id="toasts" aria-live="polite" aria-atomic="false"></div>
+<button id="navback" class="sm" hidden aria-label="Voltar para a página anterior">← Voltar</button>
+<button id="thm" class="theme" aria-label="Alternar tema">🌓</button>
+
+<section id="home">
+  <div class="logo" aria-hidden="true">💀</div>
+  <h1>Tellus Bang Bang</h1>
+  <p class="tagline mut">Campeões, tipos e uma arena que se fecha.</p>
+  <button class="go" id="hb">Sala de batalha</button>
+  <button id="hstory">📖 Modo história</button>
+  <button id="hc">Campeões</button>
+  <button id="hh">Como jogar</button>
+  <div class="login-box" id="loginBox">
+    <span id="who">Visitante</span>
+    <button id="btnLogin" class="sm">🔑 Entrar</button>
+    <button id="btnLogout" class="sm" hidden>Sair</button>
+    <button id="btnAdmin" class="sm danger" hidden>🛡️ Painel do dono</button>
+  </div>
+  <p class="tiny mut">Entre para guardar seus campeões e configurações na nuvem.</p>
+</section>
+
+<section id="help">
+  <div class="row"><button id="h2h" class="sm">← Início</button></div>
+  <div id="hcont"></div>
+</section>
+
+<section id="ed">
+  <h1>Campeões</h1>
+  <div class="row">
+    <input id="eq" type="search" placeholder="Buscar campeão…" aria-label="Buscar campeão">
+    <button id="enw">+ Novo</button>
+    <button id="ers" class="sm">📥 Importar banco</button>
+    <button id="eadmin" class="sm danger" hidden>🛡️ Painel do dono</button>
+    <span id="ecloud" class="cloudstat" hidden></span>
+  </div>
+  <div class="grid" id="el"></div>
+  <div id="ef"></div>
+  <div class="row">
+    <button id="e2h">Início</button>
+    <span id="em" role="status" aria-live="polite"></span>
+  </div>
+</section>
+
+<section id="menu">
+  <h1>Tellus Bang Bang</h1>
+  <p class="mut">Monte seu time (até 3 campeões). A IA sempre usa a mesma quantidade de campeões que você.</p>
+
+  <div class="setup">
+    <div class="setup-box">
+      <div class="setup-h">Modo de jogo</div>
+      <div class="row tight" id="modes"></div>
+      <p class="hint" id="modedesc"></p>
+    </div>
+    <div class="setup-box">
+      <div class="setup-h">Dificuldade da IA</div>
+      <div class="row tight" id="ais"></div>
+      <div class="setup-h">Times na arena</div>
+      <div class="row tight"><span id="nt"></span></div>
+      <div class="setup-h">Câmera na luta</div>
+      <div class="row tight" id="cams"></div>
+      <div class="setup-h">Efeitos visuais</div>
+      <div class="row tight"><button id="mfx" title="Desligar efeitos e mostrar só as sprites">✨ Efeitos</button></div>
+    </div>
+    <div class="setup-box wide">
+      <div class="setup-h">Arena</div>
+      <div class="row tight" id="arenas"></div>
+    </div>
+  </div>
+
+  <div class="row"><b>Seu time:</b> <span id="cnt"></span></div>
+  <div id="empty" class="note warn" hidden>
+    <b>Seu elenco está vazio.</b> Os antigos personagens iniciais agora ficam apenas no banco.
+    <div class="row tight">
+      <button id="bankimport">📥 Importar banco</button>
+      <button id="createchamp">➕ Criar campeão</button>
+    </div>
+  </div>
+  <div class="grid" id="ro"></div>
+  <div class="note" id="pn"></div>
+  <div class="row">
+    <button id="m2h">Início</button>
+    <button id="mh">Como jogar</button>
+    <button class="go" id="play">Lutar</button>
+    <span id="cloud" class="cloudstat" hidden></span>
+  </div>
+  <p class="hint">Toque num campeão para colocá-lo no time. Toque na etiqueta (tank, dps, suporte) para trocá-la. Segure para ver os detalhes.</p>
+</section>
+
+<!-- Modo história: cada seção é uma página independente. -->
+<section id="hist" class="hpage">
+  <div class="row"><button id="x2h" class="sm">← Início</button><h1>📖 Aventura</h1></div>
+  <div class="row tight hhead">
+    <span class="chip hcoin">🪙 0</span>
+    <span class="chip hstage">⚔️ Estágio 1</span>
+    <span class="chip hwins">🏆 0 vitórias</span>
+  </div>
+  <div class="row tight" id="htabs">
+    <button data-tab="aventura">⚔️ Aventura</button>
+    <button data-tab="loja">🛒 Loja</button>
+    <button data-tab="colecao">📚 Coleção</button>
+    <button disabled title="Novas seções serão adicionadas aqui">➕ Em breve</button>
+  </div>
+  <div id="hpanel"></div>
+  <p class="hint">Na primeira visita você escolhe 1 campeão comum vindo da nuvem; os demais e as cores são comprados na loja com moedas ganhas nas vitórias. Os campeões são os mesmos dos outros modos, mas aqui nível, XP, pontos e cor são fixos e próprios da história. Só o modo história concede XP.</p>
+</section>
+
+<section id="hloja" class="hpage">
+  <div class="row"><button id="hlback" class="sm">← Voltar</button><h1>🛒 Loja</h1></div>
+  <div class="row tight hhead">
+    <span class="chip hcoin">🪙 0</span>
+    <span class="chip hstage">⚔️ Estágio 1</span>
+    <span class="chip hwins">🏆 0 vitórias</span>
+  </div>
+  <div id="hlpanel"></div>
+</section>
+
+<section id="hcolecao" class="hpage">
+  <div class="row"><button id="hcvback" class="sm">← Voltar</button><h1>📚 Coleção</h1></div>
+  <div class="row tight hhead">
+    <span class="chip hcoin">🪙 0</span>
+    <span class="chip hstage">⚔️ Estágio 1</span>
+    <span class="chip hwins">🏆 0 vitórias</span>
+  </div>
+  <div id="hcpainel"></div>
+</section>
+
+<section id="g">
+  <div id="gtop" aria-label="Informações da batalha">
+    <span id="gmode"></span>
+    <span id="garena"></span>
+    <span id="gai"></span>
+    <span id="gtime"></span>
+  </div>
+  <div id="hudE" aria-label="Times inimigos"></div>
+  <div id="cvw">
+    <canvas id="cv" role="img" aria-label="Arena de batalha"></canvas>
+    <div id="hitbars" aria-hidden="true"></div>
+    <div id="camctl" aria-label="Controles de câmera">
+      <button id="bzm" title="Afastar (roda do mouse)">−</button>
+      <span id="zlbl">100%</span>
+      <button id="bzp" title="Aproximar (roda do mouse)">+</button>
+      <button id="bzc" title="Recentralizar a arena">⌖</button>
+      <button id="bfx" class="sm" aria-pressed="false" title="Desligar efeitos visuais e mostrar só as sprites">✨ Efeitos</button>
+    </div>
+    <div id="info"></div>
+    <div id="prep">
+      <b>Posicionamento</b>
+      <span id="prepN">15s</span>
+      <small>Arraste seus campeões. A luta começa sozinha no fim do tempo.</small>
+      <button id="bstart" class="go">▶ Iniciar agora</button>
+    </div>
+    <div id="log" class="off" aria-label="Registro da batalha">
+      <div class="logh">📜 Registro</div>
+      <ol id="logl"></ol>
+    </div>
+    <div id="end" role="dialog" aria-modal="true" aria-live="assertive">
+      <div id="et"></div>
+      <div class="row center" id="endacts">
+        <button class="go" id="bfin">Finalizar</button>
+        <button id="brm">Recomeçar</button>
+        <button id="bteam">Trocar time</button>
+        <button id="bnext" title="Continuar a sequência de vitórias">Próxima rodada →</button>
+        <button id="bhist" title="Voltar ao modo história">📖 História</button>
+      </div>
+    </div>
+  </div>
+  <div id="hud" aria-label="Seu time"></div>
+  <div id="hud2">
+    <button id="bd">Defender (J)</button>
+    <button id="br">Recuar (K)</button>
+    <button id="bf">Livre (L)</button>
+    <button id="bu">Atacar (U)</button>
+    <button id="bi">Finalizar (I)</button>
+    <button id="bo">Focar (O)</button>
+    <button id="blog" class="sm" aria-pressed="false" title="Mostrar ou ocultar o registro da batalha">📜 Registro</button>
+    <button id="bq" class="sm">Sair</button>
+    <span class="hint">Comandos valem para o líder (★) e só um por vez — <b>Livre</b> cancela a ordem ativa. Troque de líder com A/D, 1–3 ou tocando nele. Toque num inimigo para focar; toque dentro da arena para o líder querer ir naquela direção. Fora da arena, arraste para mover a câmera. Use a roda do mouse ou os botões +/− para ajustar o zoom e ⌖ para recentralizar.</span>
+  </div>
+</section>
+
+<noscript>Este jogo precisa de JavaScript ativado.</noscript>
+
+<script src="js/core.js"></script>
+<script src="js/data.js"></script>
+<script src="js/sanitize.js"></script>
+<script src="js/state.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/history.js"></script>
+<script src="js/champions.js"></script>
+<script src="js/menu.js"></script>
+<script src="js/editor.js"></script>
+<script src="js/battle.js"></script>
+<script src="js/render.js"></script>
+<script src="js/hud.js"></script>
+<script src="js/tips.js"></script>
+<script src="js/input.js"></script>
+<script src="js/account.js"></script>
+<script src="js/main.js"></script>
+<script src="https://www.gstatic.com/firebasejs/13.3.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/13.3.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/13.3.0/firebase-firestore-compat.js"></script>
+<script src="js/cloud.js"></script>
+</body>
+</html>
